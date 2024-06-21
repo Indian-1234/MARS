@@ -18,7 +18,7 @@ pipeline {
                 sh 'npm install'
                 sh 'npm run build'
                 
-                // Archive build artifacts (example: assuming 'dist' directory)
+                // Archive build artifacts (example: assuming 'dist' directory~
                 archiveArtifacts artifacts: 'dist/**'
             }
         }
