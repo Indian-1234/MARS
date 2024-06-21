@@ -5,7 +5,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from Git repository
-                git 'https://Indian-1234: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@github.com/Indian-1234/MARS.git'
+                git 'https://Indian-1234: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@github.com/Indian-1234/MARS.git'
             }
         }
         
