@@ -24,23 +24,27 @@ pipeline {
         stage('NPM Install') {
             steps {
                 // Install npm dependencies
-                sh 'npm install'
+                dir('client') {
+                    sh 'npm install'
+                }
             }
         }
         
         stage('Build') {
             steps {
-                // Run build commands here (if applicable)
-                // Example: sh 'npm run build'
-                // You can include other build commands as needed
-                sh 'npm run build'
+                // Run build commands here (in the 'client' directory)
+                dir('client') {
+                    sh 'npm run build'
+                }
             }
         }
         
         stage('Archive Build Artifacts') {
             steps {
                 // Archive the build artifacts (e.g., 'build' directory)
-                archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
+                dir('client') {
+                    archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
+                }
             }
         }
         
