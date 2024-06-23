@@ -68,6 +68,11 @@ pipeline {
                 echo 'Deploying the application...'
                 sshagent(credentials: [env.VPS_CREDENTIALS]) {
                     script {
+                        // Transfer build files to the VPS
+                        sh """
+                            scp -o StrictHostKeyChecking=no -r client/build/* ${env.VPS_USER}@${env.VPS_HOST}:/home/marsinstitute/htdocs/www.marsinstitute.in/
+                        """
+                        // Connect to the VPS and start the application
                         sh """
                             ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '
                                 cd /home/marsinstitute/htdocs/www.marsinstitute.in/backend &&
@@ -85,7 +90,7 @@ pipeline {
         stage('Wait for Deployment') {
             steps {
                 echo 'Waiting for 10 seconds to allow the deployment to settle...'
-                sh 'sleep 30'
+                sh 'sleep 10'
             }
         }
 
