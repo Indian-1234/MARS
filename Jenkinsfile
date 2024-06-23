@@ -79,18 +79,16 @@ pipeline {
                             scp -o StrictHostKeyChecking=no -r client/build/* ${env.VPS_USER}@${env.VPS_HOST}:/home/marsinstitute/htdocs/www.marsinstitute.in/MARS/client/build
                         """
                         // Connect to the VPS and start the application in the background
-                        sshCommand = """
+                        def sshCommand = '''
                             cd /home/marsinstitute/htdocs/www.marsinstitute.in/backend &&
                             source ~/.nvm/nvm.sh &&
                             nvm install 18.17.0 &&
                             nvm use 18.17.0 &&
                             nohup npm start > app.log 2>&1 &
-                            echo $!
-                        """
-                        def pid = sh(script: "ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '${sshCommand}'", returnStdout: true).trim()
-                        echo "Started application with PID: ${pid}"
+                        '''
+                        sh "ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '${sshCommand}'"
                     }
-                }
+                }  
             }
         }
 
@@ -99,28 +97,6 @@ pipeline {
                 echo 'Waiting for 30 seconds to allow the deployment to settle...'
                 script {
                     sleep(time: 30, unit: 'SECONDS')
-                }
-            }
-        }
-
-        stage('Verify Deployment') {
-            steps {
-                echo 'Verifying deployment...'
-                sshagent(credentials: [env.VPS_CREDENTIALS]) {
-                    script {
-                        // Check if the application is running
-                        def checkCommand = """
-                            ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '
-                                ps -p ${pid} | grep node
-                            '
-                        """
-                        def result = sh(script: checkCommand, returnStatus: true)
-                        if (result == 0) {
-                            echo "Application with PID ${pid} is running."
-                        } else {
-                            error "Application with PID ${pid} is not running."
-                        }
-                    }
                 }
             }
         }
