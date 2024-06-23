@@ -4,8 +4,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from Git repository
-                git 'https://github.com/Indian-1234/MARS.git'
+                // Checkout the code from Git repository, specifying the 'main' branch
+                git branch: 'main', url: 'https://github.com/Indian-1234/MARS.git'
             }
         }
         
@@ -15,11 +15,13 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh 'npm install'
-                sh 'npm run build'
-                
-                // Archive build artifacts (example: assuming 'dist' directory~
-                archiveArtifacts artifacts: 'dist/**'
+                dir('client') {
+                    sh 'npm install'
+                    sh 'npm run build'
+                    
+                    // Archive build artifacts (example: assuming 'dist' directory)
+                    archiveArtifacts artifacts: 'dist/**'
+                }
             }
         }
         
@@ -29,7 +31,9 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh 'npm test'
+                dir('client') {
+                    sh 'npm test'
+                }
             }
         }
         
@@ -39,7 +43,9 @@ pipeline {
                 branch 'main'
             }
             steps {
-                sh 'npm run deploy'
+                dir('client') {
+                    sh 'npm run deploy'
+                }
             }
         }
     }
