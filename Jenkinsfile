@@ -68,21 +68,28 @@ pipeline {
                 echo 'Deploying the application...'
                 sshagent(credentials: [env.VPS_CREDENTIALS]) {
                     script {
-                        // Transfer specific build files to the VPS
+                        // Kill any process running on port 8000
                         sh """
-                            scp -o StrictHostKeyChecking=no -r client/build/asset-manifest.json client/build/favicon.ico client/build/index.html client/build/manifest.json client/build/robots.txt client/build/static ${env.VPS_USER}@${env.VPS_HOST}:/home/marsinstitute/htdocs/www.marsinstitute.in/MARS/client/build
+                            ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '
+                                fuser -k 8000/tcp || true
+                            '
+                        """
+                        // Transfer build files to the VPS
+                        sh """
+                            scp -o StrictHostKeyChecking=no -r client/build/* ${env.VPS_USER}@${env.VPS_HOST}:/home/marsinstitute/htdocs/www.marsinstitute.in/MARS/client/build
                         """
                         // Connect to the VPS and start the application in the background
-                        sshCommand = """
-                            cd /home/marsinstitute/htdocs/www.marsinstitute.in/backend &&
-                            source ~/.nvm/nvm.sh &&
-                            nohup npm start > app.log 2>&1 &
-                            echo $!
+                        sh """
+                            ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '
+                                cd /home/marsinstitute/htdocs/www.marsinstitute.in/backend &&
+                                source ~/.nvm/nvm.sh &&
+                                nvm install 18.17.0 &&
+                                nvm use 18.17.0 &&
+                                nohup npm start > app.log 2>&1 &
+                            '
                         """
-                        def pid = sh(script: "ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '${sshCommand}'", returnStdout: true).trim()
-                        echo "Started application with PID: ${pid}"
                     }
-                }
+                }  
             }
         }
 
@@ -90,7 +97,7 @@ pipeline {
             steps {
                 echo 'Waiting for 10 seconds to allow the deployment to settle...'
                 script {
-                    sleep(time: 30, unit: 'SECONDS')
+                    sleep(time: 10, unit: 'SECONDS')
                 }
             }
         }
