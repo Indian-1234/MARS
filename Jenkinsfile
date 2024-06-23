@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         GIT_BRANCH = 'main'
-        NODEJS_HOME = tool name: 'NodeJS 14.17.0', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
+        NODEJS_HOME = tool name: 'NodeJS 18.20.2', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
     }
 
     stages {
