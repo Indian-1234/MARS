@@ -6,7 +6,6 @@ import HOST from '../../configure';
 import Avatar from '@material-ui/core/Avatar';
 import PhotoRoundedIcon from '@material-ui/icons/PhotoRounded';
 import SendRoundedIcon from '@material-ui/icons/SendRounded';
-import HOST from '../../configure';
 import autosize from 'autosize';
 import axios from 'axios';
 import db, { storage } from '../../firebase';
