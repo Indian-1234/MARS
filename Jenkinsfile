@@ -78,26 +78,27 @@ pipeline {
                         sh """
                             scp -o StrictHostKeyChecking=no -r client/build/* ${env.VPS_USER}@${env.VPS_HOST}:/home/marsinstitute/htdocs/www.marsinstitute.in/MARS/client/build
                         """
-                        // Connect to the VPS and start the application
+                        // Connect to the VPS and start the application in the background
                         sh """
                             ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '
                                 cd /home/marsinstitute/htdocs/www.marsinstitute.in/backend &&
                                 source ~/.nvm/nvm.sh &&
                                 nvm install 18.17.0 &&
                                 nvm use 18.17.0 &&
-                                npm start &
-                                sleep 10
+                                nohup npm start > app.log 2>&1 &
                             '
                         """
                     }
-                }
+                }  
             }
         }
 
         stage('Wait for Deployment') {
             steps {
-                echo 'deployed'
-                
+                echo 'Waiting for 10 seconds to allow the deployment to settle...'
+                script {
+                    sleep(time: 30, unit: 'SECONDS')
+                }
             }
         }
 
