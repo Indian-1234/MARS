@@ -1,17 +1,23 @@
 pipeline {
     agent any
-    
+
+    environment {
+        VPS_CREDENTIALS = 'mars-deploy' // Replace with your actual Jenkins credentials ID
+        VPS_HOST = '185.199.53.88'         // Replace with your VPS IP or hostname
+        VPS_USER = 'root'                  // Replace with your VPS username
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout code from your Git repository
+                echo 'Checking out the code...'
                 checkout scm
             }
         }
-        
+
         stage('Environment Setup') {
             steps {
-                // Set up environment (Node.js and npm versions check)
+                echo 'Setting up the environment...'
                 script {
                     def nodeVersion = sh(script: 'node --version', returnStdout: true).trim()
                     def npmVersion = sh(script: 'npm --version', returnStdout: true).trim()
@@ -20,19 +26,19 @@ pipeline {
                 }
             }
         }
-        
+
         stage('NPM Install') {
             steps {
-                // Install npm dependencies
+                echo 'Installing npm dependencies...'
                 dir('client') {
                     sh 'npm install'
                 }
             }
         }
-        
+
         stage('Build') {
             steps {
-                // Unset CI environment variable temporarily
+                echo 'Building the project...'
                 dir('client') {
                     withEnv(['CI=false']) {
                         sh 'npm run build'
@@ -40,26 +46,62 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Archive Build Artifacts') {
             steps {
-                // Archive the build artifacts (e.g., 'build' directory)
+                echo 'Archiving build artifacts...'
                 dir('client') {
                     archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
                 }
             }
         }
-        
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                // Add your actual test steps here if needed
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+                sshagent(credentials: [env.VPS_CREDENTIALS]) {
+                    script {
+                        sh """
+                            ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '
+                                cd /home/marsinstitute/htdocs/www.marsinstitute.in/MARS &&
+                                source ~/.nvm/nvm.sh &&
+                                nvm install 18.17.0 &&
+                                nvm use 18.17.0 &&
+                                echo \$PATH &&
+                                npm --version &&
+                                npm start > app.log 2>&1 &
+                            '
+                        """
+                        // Wait for the application to start (adjust timeout if needed)
+                        sh "sleep 30"
+                    }
+                }
+            }
+        }
+
         stage('Post Actions') {
             steps {
                 echo 'Pipeline completed successfully!'
             }
         }
     }
-    
+
     post {
         always {
             echo 'This will always run'
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
