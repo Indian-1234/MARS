@@ -1,40 +1,34 @@
 pipeline {
     agent any
 
-    environment {
-        GIT_BRANCH = 'main'
-        NODEJS_HOME = tool name: 'NodeJS 18.20.2', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Environment Setup') {
             steps {
-                // Checkout the code from Git repository
-                git branch: "${GIT_BRANCH}", url: 'https://github.com/Indian-1234/MARS.git', credentialsId: '1d3f1a5e-fec2-43dd-95c7-004989bef576'
-                echo "Branch name: ${env.BRANCH_NAME}"
-            }
-        }
+                script {
+                    // Check Node.js version
+                    def nodeVersion = sh(script: 'node --version', returnStdout: true).trim()
+                    echo "Node.js version: ${nodeVersion}"
 
-        stage('Build') {
-            steps {
-                dir('client') {
-                    // Use NODEJS_HOME environment variable to set NodeJS path
-                    sh "${NODEJS_HOME}/bin/npm install"
-                    sh "${NODEJS_HOME}/bin/npm run build"
+                    // Check npm version
+                    def npmVersion = sh(script: 'npm --version', returnStdout: true).trim()
+                    echo "npm version: ${npmVersion}"
                 }
             }
         }
 
-        stage('Echo After Success') {
+        stage('NPM Version Check') {
             steps {
-                echo 'Pipeline completed successfully!'
+                script {
+                    // Run npm version check
+                    sh 'npm --version'
+                }
             }
         }
     }
 
     post {
         success {
-            echo 'All stages completed successfully!'
+            echo 'Pipeline completed successfully!'
         }
         failure {
             echo 'Pipeline failed!'
