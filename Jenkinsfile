@@ -12,7 +12,9 @@ pipeline {
         stage('Build') {
             when {
                 // Define a condition to trigger only for 'main' branch
-                branch 'main'
+                expression {
+                    return env.BRANCH_NAME == 'main'
+                }
             }
             steps {
                 dir('client') {
@@ -28,7 +30,9 @@ pipeline {
         stage('Test') {
             when {
                 // Define a condition to trigger only for 'main' branch
-                branch 'main'
+                expression {
+                    return env.BRANCH_NAME == 'main'
+                }
             }
             steps {
                 dir('client') {
@@ -40,7 +44,9 @@ pipeline {
         stage('Deploy') {
             when {
                 // Define a condition to trigger only for 'main' branch
-                branch 'main'
+                expression {
+                    return env.BRANCH_NAME == 'main'
+                }
             }
             steps {
                 dir('client') {
