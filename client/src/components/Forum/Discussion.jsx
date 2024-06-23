@@ -53,7 +53,7 @@ const Discussion = () => {
             uploadTask.on('state_changed', console.log, console.error, () => {
                 storage.ref('forum').child(fileName).getDownloadURL()
                   .then(firebaseURL => {
-                    return axios.post('http://localhost:5000/forum/createDiscussion', {
+                    return axios.post(`${HOST}forum/createDiscussion`, {
                         creatorEmail: userData.userEmail,
                         creatorName: userData.userName,
                         desc: discussionInput,
@@ -82,7 +82,7 @@ const Discussion = () => {
                   })
               })
         } else {
-            axios.post('http://localhost:5000/forum/createDiscussion', {
+            axios.post(`${HOST}/forum/createDiscussion`, {
                 creatorEmail: userData.userEmail,
                 creatorName: userData.userName,
                 desc: discussionInput

@@ -114,7 +114,7 @@ const StudentSubmission = () => {
         uploadTask.on('state_changed', console.log, console.error, () => {
             storage.ref('submissions').child(fileName).getDownloadURL()
                     .then(firebaseURL => {
-                    return axios.post('http://localhost:5000/classes/submitAssignment', {
+                    return axios.post(`${HOST}/classes/submitAssignment`, {
                         assignmentId: assignmentId,
                         studentName: userData.userName,
                         studentEmail: userData.userEmail,

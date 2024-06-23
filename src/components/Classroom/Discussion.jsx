@@ -54,7 +54,7 @@ const Discussion = ({classCode, adminEmail}) => {
             uploadTask.on('state_changed', console.log, console.error, () => {
                 storage.ref('discussion').child(fileName).getDownloadURL()
                   .then(firebaseURL => {
-                    return axios.post('http://localhost:5000/classes/createDiscussion', {
+                    return axios.post(`${HOST}classes/createDiscussion`, {
                         creatorEmail: userData.userEmail,
                         creatorName: userData.userName,
                         classCode: classCode,
@@ -84,7 +84,7 @@ const Discussion = ({classCode, adminEmail}) => {
                   })
               })
         } else {
-            axios.post('http://localhost:5000/classes/createDiscussion', {
+            axios.post(`${HOST}/classes/createDiscussion`, {
                 creatorEmail: userData.userEmail,
                 creatorName: userData.userName,
                 classCode: classCode,
