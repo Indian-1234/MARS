@@ -82,7 +82,7 @@ pipeline {
                         def sshCommand = '''
                             cd /home/marsinstitute/htdocs/www.marsinstitute.in/backend &&
                             source ~/.nvm/nvm.sh &&
-                            nvm install 18.17.0 &&
+                            kill-port 8000 &&
                             nvm use 18.17.0 &&
                             nohup npm start > app.log 2>&1 &
                         '''
