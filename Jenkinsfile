@@ -96,10 +96,8 @@ pipeline {
 
         stage('Wait for Deployment') {
             steps {
-                echo 'Waiting for 10 seconds to allow the deployment to settle...'
-                script {
-                    sleep(time: 10, unit: 'SECONDS')
-                }
+                echo 'deployed'
+                
             }
         }
 
