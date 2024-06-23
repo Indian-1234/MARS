@@ -1,49 +1,59 @@
 pipeline {
     agent any
-
+    
     stages {
+        stage('Checkout') {
+            steps {
+                // Checkout code from your Git repository
+                checkout scm
+            }
+        }
+        
         stage('Environment Setup') {
             steps {
+                // Set up environment (Node.js and npm versions check)
                 script {
-                    // Check Node.js version
                     def nodeVersion = sh(script: 'node --version', returnStdout: true).trim()
-                    echo "Node.js version: ${nodeVersion}"
-
-                    // Check npm version
                     def npmVersion = sh(script: 'npm --version', returnStdout: true).trim()
+                    echo "Node.js version: ${nodeVersion}"
                     echo "npm version: ${npmVersion}"
                 }
             }
         }
-
-        stage('NPM Install in Client') {
+        
+        stage('NPM Install') {
             steps {
-                dir('client') {
-                    // Change to your client directory path
-                    script {
-                        // Install npm packages
-                        sh 'npm install'
-                    }
-                }
+                // Install npm dependencies
+                sh 'npm install'
             }
         }
-
-        stage('NPM Version Check') {
+        
+        stage('Build') {
             steps {
-                script {
-                    // Verify npm version after installation
-                    sh 'npm --version'
-                }
+                // Run build commands here (if applicable)
+                // Example: sh 'npm run build'
+                // You can include other build commands as needed
+                sh 'npm run build'
+            }
+        }
+        
+        stage('Archive Build Artifacts') {
+            steps {
+                // Archive the build artifacts (e.g., 'build' directory)
+                archiveArtifacts artifacts: 'build/**', allowEmptyArchive: true
+            }
+        }
+        
+        stage('Post Actions') {
+            steps {
+                echo 'Pipeline completed successfully!'
             }
         }
     }
-
+    
     post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
+        always {
+            echo 'This will always run'
         }
     }
 }
