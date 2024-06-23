@@ -13,54 +13,27 @@ pipeline {
                 echo "Branch name: ${env.BRANCH_NAME}"
             }
         }
-        
+
         stage('Build') {
-            when {
-                expression {
-                    return env.BRANCH_NAME == 'main'
-                }
-            }
             steps {
                 dir('client') {
+                    // Assuming this is a Node.js project
                     sh 'npm install'
                     sh 'npm run build'
-                    
-                    // Archive build artifacts
-                    archiveArtifacts artifacts: 'dist/**'
                 }
             }
         }
-        
-        stage('Test') {
-            when {
-                expression {
-                    return env.BRANCH_NAME == 'main'
-                }
-            }
+
+        stage('Echo After Success') {
             steps {
-                dir('client') {
-                    sh 'npm test'
-                }
-            }
-        }
-        
-        stage('Deploy') {
-            when {
-                expression {
-                    return env.BRANCH_NAME == 'main'
-                }
-            }
-            steps {
-                dir('client') {
-                    sh 'npm run deploy'
-                }
+                echo 'Pipeline completed successfully!'
             }
         }
     }
-    
+
     post {
         success {
-            echo 'Pipeline completed successfully!'
+            echo 'All stages completed successfully!'
         }
         failure {
             echo 'Pipeline failed!'
