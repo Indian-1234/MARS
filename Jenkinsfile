@@ -76,7 +76,8 @@ pipeline {
                         """
                         // Transfer build files to the VPS
                         sh """
-                            scp -o StrictHostKeyChecking=no -r client/build/* ${env.VPS_USER}@${env.VPS_HOST}:/home/marsinstitute/htdocs/www.marsinstitute.in/MARS/client/build
+                            scp -o StrictHostKeyChecking=no -r client/build/* scp -o StrictHostKeyChecking=no -r client/build/* /home/marsinstitute/htdocs/www.marsinstitute.in/MARS/client/build
+
                         """
                         // Connect to the VPS and start the application in the background
                         def sshCommand = '''
