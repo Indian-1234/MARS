@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         GIT_BRANCH = 'main'
+        NODEJS_HOME = tool name: 'NodeJS 14.17.0', type: 'jenkins.plugins.nodejs.tools.NodeJSInstallation'
     }
 
     stages {
@@ -17,9 +18,9 @@ pipeline {
         stage('Build') {
             steps {
                 dir('client') {
-                    // Assuming this is a Node.js project
-                    sh 'npm install'
-                    sh 'npm run build'
+                    // Use NODEJS_HOME environment variable to set NodeJS path
+                    sh "${NODEJS_HOME}/bin/npm install"
+                    sh "${NODEJS_HOME}/bin/npm run build"
                 }
             }
         }
