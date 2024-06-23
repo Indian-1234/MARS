@@ -68,6 +68,12 @@ pipeline {
                 echo 'Deploying the application...'
                 sshagent(credentials: [env.VPS_CREDENTIALS]) {
                     script {
+                        // Kill any process running on port 8000
+                        sh """
+                            ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '
+                                fuser -k 8000/tcp || true
+                            '
+                        """
                         // Transfer build files to the VPS
                         sh """
                             scp -o StrictHostKeyChecking=no -r client/build/* ${env.VPS_USER}@${env.VPS_HOST}:/home/marsinstitute/htdocs/www.marsinstitute.in/MARS/client/build
@@ -79,18 +85,21 @@ pipeline {
                                 source ~/.nvm/nvm.sh &&
                                 nvm install 18.17.0 &&
                                 nvm use 18.17.0 &&
-                                npm start
+                                npm start &
+                                sleep 10
                             '
                         """
                     }
-                }  
+                }
             }
         }
 
         stage('Wait for Deployment') {
             steps {
                 echo 'Waiting for 10 seconds to allow the deployment to settle...'
-                sh 'sleep 10'
+                script {
+                    sleep(time: 10, unit: 'SECONDS')
+                }
             }
         }
 
