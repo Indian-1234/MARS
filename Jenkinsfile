@@ -76,7 +76,8 @@ pipeline {
                         """
                         // Transfer build files to the VPS
                         sh """
-                            scp -o StrictHostKeyChecking=no -r client/build/* scp -o StrictHostKeyChecking=no -r client/build/* /home/marsinstitute/htdocs/www.marsinstitute.in/MARS/client/build
+                            scp -o StrictHostKeyChecking=no -r client/build/{asset-manifest.json,favicon.ico,index.html,manifest.json,robots.txt,static} root@185.199.53.88:/home/marsinstitute/htdocs/www.marsinstitute.in/MARS/client/build
+
 
                         """
                         // Connect to the VPS and start the application in the background
