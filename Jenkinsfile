@@ -6,6 +6,8 @@ pipeline {
             steps {
                 // Checkout the code from Git repository, specifying the 'main' branch
                 git branch: 'main', url: 'https://github.com/Indian-1234/MARS.git'
+                // Echo the branch name to verify
+                echo "Branch name: ${env.BRANCH_NAME}"
             }
         }
         
