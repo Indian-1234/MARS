@@ -32,9 +32,11 @@ pipeline {
         
         stage('Build') {
             steps {
-                // Run build commands here (in the 'client' directory)
+                // Unset CI environment variable temporarily
                 dir('client') {
-                    sh 'npm run build'
+                    withEnv(['CI=false']) {
+                        sh 'npm run build'
+                    }
                 }
             }
         }
