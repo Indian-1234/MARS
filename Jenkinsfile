@@ -1,19 +1,21 @@
 pipeline {
     agent any
 
+    environment {
+        GIT_BRANCH = 'main'
+    }
+
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from Git repository, specifying the 'main' branch
-                git branch: 'main', url: 'https://github.com/Indian-1234/MARS.git'
-                // Echo the branch name to verify
+                // Checkout the code from Git repository
+                git branch: "${GIT_BRANCH}", url: 'https://github.com/Indian-1234/MARS.git', credentialsId: '1d3f1a5e-fec2-43dd-95c7-004989bef576'
                 echo "Branch name: ${env.BRANCH_NAME}"
             }
         }
         
         stage('Build') {
             when {
-                // Define a condition to trigger only for 'main' branch
                 expression {
                     return env.BRANCH_NAME == 'main'
                 }
@@ -23,7 +25,7 @@ pipeline {
                     sh 'npm install'
                     sh 'npm run build'
                     
-                    // Archive build artifacts (example: assuming 'dist' directory)
+                    // Archive build artifacts
                     archiveArtifacts artifacts: 'dist/**'
                 }
             }
@@ -31,7 +33,6 @@ pipeline {
         
         stage('Test') {
             when {
-                // Define a condition to trigger only for 'main' branch
                 expression {
                     return env.BRANCH_NAME == 'main'
                 }
@@ -45,7 +46,6 @@ pipeline {
         
         stage('Deploy') {
             when {
-                // Define a condition to trigger only for 'main' branch
                 expression {
                     return env.BRANCH_NAME == 'main'
                 }
