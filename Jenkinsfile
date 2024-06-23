@@ -2,39 +2,14 @@ pipeline {
     agent any
 
     environment {
-        VPS_CREDENTIALS = 'fd22bb75-c16e-479a-8eab-a3a27fa25746' // Replace with your actual Jenkins credentials ID
-        VPS_HOST = '185.199.53.88'       // Replace with your VPS IP or hostname
+        VPS_CREDENTIALS = 'vps-ssh-key'  // Replace with your Jenkins credentials ID
+        VPS_HOST = 'VPS_IP'              // Replace with your VPS IP or hostname
         VPS_USER = 'root'                // Replace with your VPS username
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                echo 'Checking out the code...'
-                checkout scm // This assumes your Jenkinsfile is stored in the same repository you are checking out
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo 'Building the project...'
-                // Add your actual build steps here if needed
-                // Example: mvn clean package
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                // Add your actual test steps here if needed
-                // Example: mvn test
-            }
-        }
-
         stage('Deploy') {
             steps {
-                echo 'Deploying the application...'
-
                 sshagent(credentials: [env.VPS_CREDENTIALS]) {
                     script {
                         sh """
@@ -48,9 +23,6 @@ pipeline {
                                 npm start
                             '
                         """
-
-                        // Wait for the application to start (adjust timeout if needed)
-                        sh "sleep 30"
                     }
                 }
             }
@@ -59,7 +31,7 @@ pipeline {
 
     post {
         always {
-            echo 'This runs always after the pipeline is finished'
+            echo 'Pipeline finished'
         }
 
         success {
