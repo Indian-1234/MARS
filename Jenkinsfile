@@ -16,10 +16,22 @@ pipeline {
             }
         }
 
+        stage('NPM Install in Client') {
+            steps {
+                dir('client') {
+                    // Change to your client directory path
+                    script {
+                        // Install npm packages
+                        sh 'npm install'
+                    }
+                }
+            }
+        }
+
         stage('NPM Version Check') {
             steps {
                 script {
-                    // Run npm version check
+                    // Verify npm version after installation
                     sh 'npm --version'
                 }
             }
