@@ -45,7 +45,7 @@ pipeline {
                                 nvm use 18.17.0 &&
                                 echo \$PATH &&
                                 npm --version &&
-                                nohup npm start > app.log 2>&1 &
+                                npm start
                             '
                         """
 
