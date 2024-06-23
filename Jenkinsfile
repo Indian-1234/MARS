@@ -86,7 +86,8 @@ pipeline {
                             nvm use 18.17.0 &&
                             nohup npm start > app.log 2>&1 &
                         '''
-                        sh "ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '${sshCommand}'"
+                        // Run the SSH command in background
+                        sh "ssh -o StrictHostKeyChecking=no ${env.VPS_USER}@${env.VPS_HOST} '${sshCommand}' > /dev/null 2>&1 &"
                     }
                 }  
             }
@@ -94,9 +95,9 @@ pipeline {
 
         stage('Wait for Deployment') {
             steps {
-                echo 'Waiting for 30 seconds to allow the deployment to settle...'
+                echo 'Waiting for 10 seconds to allow the deployment to settle...'
                 script {
-                    sleep(time: 30, unit: 'SECONDS')
+                    sleep(time: 10, unit: 'SECONDS')
                 }
             }
         }
