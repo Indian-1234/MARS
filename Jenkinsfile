@@ -8,33 +8,10 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                echo 'Checking out the code...'
-                // Add your actual checkout steps here if needed
-                checkout scm
-            }
-        }
-
-        stage('Build') {
-            steps {
-                echo 'Building the project...'
-                // Add your actual build steps here if needed
-                sh 'npm install'
-            }
-        }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                // Add your actual test steps here if needed
-                sh 'npm test'
-            }
-        }
-
         stage('Deploy') {
             steps {
                 echo 'Deploying the application...'
+
                 sshagent(credentials: [env.VPS_CREDENTIALS]) {
                     script {
                         sh """
